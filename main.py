@@ -1,7 +1,11 @@
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
+import pandas
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+excel_data_df = pandas.read_excel('wine.xlsx')
+print(excel_data_df.to_json(orient='records', force_ascii=False))
 
 
 def get_lifetime():
