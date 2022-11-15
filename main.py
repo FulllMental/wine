@@ -4,9 +4,6 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import pandas
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-excel_data_df = pandas.read_excel('wine.xlsx')
-print(excel_data_df.to_json(orient='records', force_ascii=False))
-
 
 def get_lifetime():
     lifetime = datetime.now().year - 1920
@@ -25,11 +22,13 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
+wine_data = pandas.read_excel('wine.xlsx').to_dict(orient='records')
 
 template = env.get_template('template.html')
 
 rendered_page = template.render(
-    lifetime=get_lifetime()
+    lifetime=get_lifetime(),
+    wine_data=wine_data
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
