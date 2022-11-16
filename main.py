@@ -1,8 +1,10 @@
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from pprint import pprint
 
-import pandas
+import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
 
 
 def get_lifetime():
@@ -22,7 +24,29 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
-wine_data = pandas.read_excel('wine.xlsx').to_dict(orient='records')
+wine_data = pd.read_excel('wine.xlsx').to_dict(orient='records')
+drink_data = pd.read_excel('wine2.xlsx', keep_default_na=False).to_dict(orient='records')
+
+
+def get_all_drinks(drink_data):
+    categories = []
+    sorted_drinks ={}
+
+    for drink in drink_data:
+        if drink['Категория'] not in categories:
+            categories.append(drink['Категория'])
+
+    for category in sorted(categories):
+        drinks = []
+        for drink in drink_data:
+            if drink['Категория'] != category:
+                continue
+            drinks.append(drink)
+        sorted_drinks.update({category: drinks})
+    return sorted_drinks
+
+pprint(get_all_drinks(drink_data))
+
 
 template = env.get_template('template.html')
 
