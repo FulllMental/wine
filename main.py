@@ -6,7 +6,6 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-
 def get_lifetime():
     lifetime = datetime.now().year - 1920
     if lifetime % 100 in [number for number in range(11, 15)]:
@@ -25,27 +24,29 @@ env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 wine_data = pd.read_excel('wine.xlsx').to_dict(orient='records')
-drink_data = pd.read_excel('wine2.xlsx', keep_default_na=False).to_dict(orient='records')
+drinks_data = pd.read_excel('wine2.xlsx', keep_default_na=False).to_dict(orient='records')
 
 
-def get_all_drinks(drink_data):
+def get_all_drinks(drinks_data):
     categories = []
-    sorted_drinks ={}
+    grouped_drinks = {}
 
-    for drink in drink_data:
-        if drink['Категория'] not in categories:
-            categories.append(drink['Категория'])
+    for drink in drinks_data:
+        if drink['Категория'] in categories:
+            continue
+        categories.append(drink['Категория'])
 
-    for category in sorted(categories):
+    for category in categories:
         drinks = []
-        for drink in drink_data:
+        for drink in drinks_data:
             if drink['Категория'] != category:
                 continue
             drinks.append(drink)
-        sorted_drinks.update({category: drinks})
-    return sorted_drinks
+        grouped_drinks.update({category: drinks})
+    return grouped_drinks
 
-pprint(get_all_drinks(drink_data))
+
+pprint(get_all_drinks(drinks_data))
 
 
 template = env.get_template('template.html')
