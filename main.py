@@ -1,3 +1,4 @@
+import collections
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pprint import pprint
@@ -28,21 +29,15 @@ drinks_data = pd.read_excel('wine2.xlsx', keep_default_na=False).to_dict(orient=
 
 
 def get_all_drinks(drinks_data):
-    categories = []
-    grouped_drinks = {}
+    all_drink_types = [drink['Категория'] for drink in drinks_data]
+    categories = list(collections.Counter(all_drink_types))
 
-    for drink in drinks_data:
-        if drink['Категория'] in categories:
-            continue
-        categories.append(drink['Категория'])
-
+    grouped_drinks = collections.defaultdict(list)
     for category in categories:
-        drinks = []
         for drink in drinks_data:
-            if drink['Категория'] != category:
+            if category not in drink['Категория']:
                 continue
-            drinks.append(drink)
-        grouped_drinks.update({category: drinks})
+            grouped_drinks[category].append(drink)
     return grouped_drinks
 
 
