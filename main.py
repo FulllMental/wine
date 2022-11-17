@@ -1,7 +1,6 @@
 import collections
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from pprint import pprint
 
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -24,7 +23,7 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
-drinks_data = pd.read_excel('wine2.xlsx', keep_default_na=False).to_dict(orient='records')
+drinks_data = pd.read_excel('wine3.xlsx', keep_default_na=False).to_dict(orient='records')
 
 
 def get_all_drinks(drinks_data):
