@@ -24,7 +24,6 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
-wine_data = pd.read_excel('wine.xlsx').to_dict(orient='records')
 drinks_data = pd.read_excel('wine2.xlsx', keep_default_na=False).to_dict(orient='records')
 
 
@@ -41,14 +40,13 @@ def get_all_drinks(drinks_data):
     return grouped_drinks
 
 
-pprint(get_all_drinks(drinks_data))
-
+all_drinks = get_all_drinks(drinks_data)
 
 template = env.get_template('template.html')
 
 rendered_page = template.render(
     lifetime=get_lifetime(),
-    wine_data=wine_data
+    all_drinks=all_drinks
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
