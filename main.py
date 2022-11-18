@@ -1,16 +1,14 @@
 import argparse
 import collections
-import os
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import pandas as pd
-from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-def get_lifetime():
-    lifetime = datetime.now().year - 1920
+def get_lifetime(year):
+    lifetime = datetime.now().year - year
     if lifetime % 100 in [number for number in range(11, 15)]:
         year_txt = ' лет'
     elif lifetime % 10 == 1:
@@ -31,7 +29,7 @@ def group_goods(shop_goods):
 
 
 if __name__ == '__main__':
-
+    winery_foundation_year = 1920
     parser = argparse.ArgumentParser(
         description='Запускает сайт и заполняет раздел товаров информацией указанной в .xlsx файле'
     )
@@ -49,7 +47,7 @@ if __name__ == '__main__':
     template = env.get_template('template.html')
 
     rendered_page = template.render(
-        lifetime=get_lifetime(),
+        lifetime=get_lifetime(winery_foundation_year),
         grouped_goods=grouped_goods
     )
 
