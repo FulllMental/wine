@@ -19,13 +19,6 @@ def get_lifetime():
     return str(lifetime) + year_txt
 
 
-env = Environment(
-    loader=FileSystemLoader('.'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
-drinks_data = pd.read_excel(f'goods.xlsx', keep_default_na=False).to_dict(orient='records')
-
-
 def get_all_drinks(drinks_data):
     all_drink_types = [drink['Категория'] for drink in drinks_data]
     categories = list(collections.Counter(all_drink_types))
@@ -39,17 +32,25 @@ def get_all_drinks(drinks_data):
     return grouped_drinks
 
 
-all_drinks = get_all_drinks(drinks_data)
+if __name__ == '__main__':
+    env = Environment(
+        loader=FileSystemLoader('.'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
 
-template = env.get_template('template.html')
+    drinks_data = pd.read_excel(f'goods.xlsx', keep_default_na=False).to_dict(orient='records')
 
-rendered_page = template.render(
-    lifetime=get_lifetime(),
-    all_drinks=all_drinks
-)
+    all_drinks = get_all_drinks(drinks_data)
 
-with open('index.html', 'w', encoding="utf8") as file:
-    file.write(rendered_page)
+    template = env.get_template('template.html')
 
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+    rendered_page = template.render(
+        lifetime=get_lifetime(),
+        all_drinks=all_drinks
+    )
+
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
+
+    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
