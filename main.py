@@ -19,17 +19,17 @@ def get_lifetime():
     return str(lifetime) + year_txt
 
 
-def get_all_drinks(drinks_data):
-    all_drink_types = [drink['Категория'] for drink in drinks_data]
-    categories = list(collections.Counter(all_drink_types))
+def group_goods(shop_goods):
+    all_goods_types = [product['Категория'] for product in shop_goods]
+    categories = list(collections.Counter(all_goods_types))
 
-    grouped_drinks = collections.defaultdict(list)
+    grouped_goods = collections.defaultdict(list)
     for category in categories:
-        for drink in drinks_data:
-            if category not in drink['Категория']:
+        for product in shop_goods:
+            if category not in product['Категория']:
                 continue
-            grouped_drinks[category].append(drink)
-    return grouped_drinks
+            grouped_goods[category].append(product)
+    return grouped_goods
 
 
 if __name__ == '__main__':
@@ -38,15 +38,15 @@ if __name__ == '__main__':
         autoescape=select_autoescape(['html', 'xml'])
     )
 
-    drinks_data = pd.read_excel(f'goods.xlsx', keep_default_na=False).to_dict(orient='records')
+    shop_goods = pd.read_excel(f'goods.xlsx', keep_default_na=False).to_dict(orient='records')
 
-    all_drinks = get_all_drinks(drinks_data)
+    grouped_goods = group_goods(shop_goods)
 
     template = env.get_template('template.html')
 
     rendered_page = template.render(
         lifetime=get_lifetime(),
-        all_drinks=all_drinks
+        grouped_goods=grouped_goods
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
