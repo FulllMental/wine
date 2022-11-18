@@ -1,8 +1,11 @@
+import argparse
 import collections
+import os
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import pandas as pd
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
@@ -33,13 +36,21 @@ def group_goods(shop_goods):
 
 
 if __name__ == '__main__':
+    load_dotenv()
+    filename = os.getenv('FILENAME')
+
+    parser = argparse.ArgumentParser(
+        description='Запускает сайт и заполняет раздел товаров информацией указанной в .xlsx файле'
+    )
+    parser.add_argument('path_to_file', help='Введите путь до .xlsx файла с описанием товаров')
+    args = parser.parse_args()
+
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
     )
 
-    shop_goods = pd.read_excel(f'goods.xlsx', keep_default_na=False).to_dict(orient='records')
-
+    shop_goods = pd.read_excel(f'{args.path_to_file}\\{filename}', keep_default_na=False).to_dict(orient='records')
     grouped_goods = group_goods(shop_goods)
 
     template = env.get_template('template.html')
