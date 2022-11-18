@@ -23,26 +23,19 @@ def get_lifetime():
 
 
 def group_goods(shop_goods):
-    all_goods_types = [product['Категория'] for product in shop_goods]
-    categories = list(collections.Counter(all_goods_types))
-
     grouped_goods = collections.defaultdict(list)
-    for category in categories:
-        for product in shop_goods:
-            if category not in product['Категория']:
-                continue
-            grouped_goods[category].append(product)
+    for product in shop_goods:
+        category, *values = product.values()
+        grouped_goods[category].append(product)
     return grouped_goods
 
 
 if __name__ == '__main__':
-    load_dotenv()
-    filename = os.getenv('FILENAME')
 
     parser = argparse.ArgumentParser(
         description='Запускает сайт и заполняет раздел товаров информацией указанной в .xlsx файле'
     )
-    parser.add_argument('path_to_file', help='Введите путь до .xlsx файла с описанием товаров')
+    parser.add_argument('filepath', help='Введите путь к .xlsx файлу с описанием товаров')
     args = parser.parse_args()
 
     env = Environment(
@@ -50,7 +43,7 @@ if __name__ == '__main__':
         autoescape=select_autoescape(['html', 'xml'])
     )
 
-    shop_goods = pd.read_excel(f'{args.path_to_file}\\{filename}', keep_default_na=False).to_dict(orient='records')
+    shop_goods = pd.read_excel(args.filepath, keep_default_na=False).to_dict(orient='records')
     grouped_goods = group_goods(shop_goods)
 
     template = env.get_template('template.html')
