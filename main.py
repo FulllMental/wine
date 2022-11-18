@@ -23,7 +23,7 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
-drinks_data = pd.read_excel('wine3.xlsx', keep_default_na=False).to_dict(orient='records')
+drinks_data = pd.read_excel(f'goods.xlsx', keep_default_na=False).to_dict(orient='records')
 
 
 def get_all_drinks(drinks_data):
