@@ -17,7 +17,7 @@ def get_lifetime(year):
         year_txt = ' года'
     else:
         year_txt = ' лет'
-    return str(lifetime) + year_txt
+    return f'{lifetime} {year_txt}'
 
 
 def group_goods(shop_goods):
